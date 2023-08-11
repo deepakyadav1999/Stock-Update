@@ -37,6 +37,8 @@ def download(filename):
     # file_path = os.path.join(os.getcwd(), filename)
     # #return send_file(f'./{filename}', as_attachment=True)
     # return send_file(file_path, as_attachment=True)
+    print(filename)
+    print(os.path.abspath(__file__))
     script_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(script_dir, filename)
     return send_file(file_path, as_attachment=True)
