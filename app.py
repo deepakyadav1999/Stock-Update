@@ -33,9 +33,12 @@ def upload():
 
 @app.route('/download/<filename>')
 def download(filename):
-    #return send_file(f'./{filename}', as_attachment=True)
-    file_path = os.path.join(os.getcwd(), filename)
-    #return send_file(f'./{filename}', as_attachment=True)
+    # #return send_file(f'./{filename}', as_attachment=True)
+    # file_path = os.path.join(os.getcwd(), filename)
+    # #return send_file(f'./{filename}', as_attachment=True)
+    # return send_file(file_path, as_attachment=True)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(script_dir, filename)
     return send_file(file_path, as_attachment=True)
 
 
