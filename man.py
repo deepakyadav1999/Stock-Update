@@ -9,7 +9,7 @@ Original file is located at
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 plan=pd.read_excel('Plan.xlsx')
 prod=pd.read_excel('Prduction.xlsx')
@@ -63,6 +63,9 @@ plan2['Net Pack']=plan2['Net Pack'].fillna(0)
 
 #plan2['fg_alloted']=0
 
+plan2[plan2['SKU']=='HT10DS1LVDFL']
+
+plan2 = plan2.assign(Remarks=np.nan)
 plan2.head()
 
 history = pd.DataFrame()
@@ -70,27 +73,40 @@ for i in range(len(plan2)):
   fg=plan2.loc[i,'SKU']
   fg_q=plan2.loc[i,'Plan Qty']
   prod_fg=prod2.query("Material==@fg").copy()
+
+  #print(i,fg,len(prod_fg))
   prod_fg.loc[:,'req']=fg_q*(prod_fg['com per unit'])
   prod_fg= pd.merge(prod_fg, group_stock, left_on='Component', right_on='Material', how='left')
   prod_fg=prod_fg.loc[:,('Material_x','Base Qty','Component','Comp-Qty','com per unit','req','initial stock','current stock')]
   prod_fg['stock before allocation']=prod_fg['current stock'].copy().values
-  if (prod_fg['current stock'] - prod_fg['req'] >= 0).all():
-    prod_fg['current stock'] -= prod_fg['req']
+  if len(prod_fg)>0:
+
+    if (prod_fg['current stock'] - prod_fg['req'] >= 0 ).all():
+      prod_fg['current stock'] -= prod_fg['req']
+    #print('I am in if conjdition')
+    #print('fg_q=',fg_q)
      # Update current stock
-    plan2.loc[i,'Net Pack']=fg_q
-  else:
+      plan2.loc[i,'Net Pack']=fg_q
+      plan2.loc[i,'Remarks']='Fully Alloted'
+    else:
     # Compute fg_possible using the formula (1 / com per unit) * current stock
-    prod_fg['fg_possible'] = (1 / prod_fg['com per unit']) * prod_fg['current stock']
+      prod_fg['fg_possible'] = (1 / prod_fg['com per unit']) * prod_fg['current stock']
 
     # Compute the minimum value of fg_possible
-    min_fg_possible = prod_fg['fg_possible'].min()
-    base_qnt=prod_fg.loc[0,'Base Qty']
+      min_fg_possible = prod_fg['fg_possible'].min()
+      base_qnt=prod_fg.loc[0,'Base Qty']
+
     #min_fg_possible=int(min_fg_possible/base_qnt)*base_qnt
 
     # Update current stock using the formula current stock = current stock - min(fg_possible) * (com per unit)
-    prod_fg['current stock'] -= min_fg_possible * prod_fg['com per unit']
-    plan2.loc[i,'Net Pack']=min_fg_possible
+      prod_fg['current stock'] -= min_fg_possible * prod_fg['com per unit']
+      plan2.loc[i,'Net Pack']=min_fg_possible
+      plan2.loc[i,'Remarks']='Partial Alloted('+str(round((min_fg_possible/fg_q)*100,2))+'%)'
+    #print('I am in else condition','fg is',min_fg_possible)
     #merged_df = pd.merge( group_stock,prod_fg, left_on='Material', right_on='Component', how='left')
+  else:
+      plan2.loc[i,'Remarks']='FG not found in BOM file'
+
   prod_fg['stock after allocation']=prod_fg['current stock'].copy().values
   list_1=list(prod_fg['Component'])
   list_2=list(prod_fg['current stock'])
@@ -105,26 +121,30 @@ for i in range(len(plan2)):
   history = pd.concat([history, prod_fg])
   #history = history.append(prod_fg)
 
+round(8/3,2)
+
 plan2.insert(1,'Material Desc',plan['Material Desc'])
 
+#plan2.iloc[130:135,:]
 
-
-plan2.head()
+#plan2.loc[130:135,:]
 
 # matched_rows = group_stock[group_stock['Material'].isin(history['Component'])]
 # matched_rows
 
-group_stock
+#group_stock
 
-history.to_csv('alloting_process.csv',index=False)
+history.to_csv('alloting_process.csv',index=True)
 
-group_stock.to_csv('updated_stock.csv',index=False)
+group_stock.to_csv('updated_stock.csv',index=True)
 
-plan2.to_csv('updated_plan.csv',index=False)
+plan2.to_csv('updated_plan.csv',index=True)
 
 group_stock.head()
 
-plan2.head(10)
+#plan2.head(10)
 
-history.head(10)
+#history.head(10)
+
+
 
