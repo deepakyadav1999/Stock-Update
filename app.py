@@ -33,6 +33,14 @@ def upload():
 
 @app.route('/download/<filename>')
 def download(filename):
+    #return send_file(f'./{filename}', as_attachment=True)
+    output_directory = os.path.join(script_dir, 'output')  # Change 'output' to the actual directory where output files are saved
+    file_path = os.path.join(output_directory, filename)
+
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=True)
+    else:
+        return "File not found", 404
     return send_file(f'./{filename}', as_attachment=True)
 
 if __name__ == '__main__':
