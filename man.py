@@ -1,4 +1,5 @@
 
+
 import numpy as np
 import pandas as pd
 #import matplotlib.pyplot as plt
@@ -63,6 +64,11 @@ plan2.head()
 plan2 = plan2.assign(Shortage=np.nan)
 plan2.head()
 
+group_stock['net req']=0
+group_stock['Cumulative Shortage']=0
+
+group_stock.head()
+
 history = pd.DataFrame()
 for i in range(len(plan2)):
   fg=plan2.loc[i,'SKU']
@@ -88,8 +94,11 @@ for i in range(len(plan2)):
       prod_fg['fg_possible'] = (1 / prod_fg['com per unit']) * prod_fg['current stock']
       shortage_df = prod_fg[prod_fg["req"] > prod_fg["stock before allocation"]]
       shortage_quantity = shortage_df["req"] - shortage_df["stock before allocation"]
-      shortage_string = "-".join([f"{component}({shortage})" for component, shortage in zip(shortage_df["Component"], shortage_quantity)])
-
+      shortage_string = "-".join([f"({component})" for component, shortage in zip(shortage_df["Component"], shortage_quantity)])
+      list1=list(shortage_df['Component'])
+      list2=list(shortage_quantity)
+      for i in range(len(list1)):
+        group_stock.loc[group_stock['Material'] == list_1[i], 'Cumulative Shortage']+=list2[i]
 
     # Compute the minimum value of fg_possible
       min_fg_possible = prod_fg['fg_possible'].min()
@@ -102,6 +111,7 @@ for i in range(len(plan2)):
       plan2.loc[i,'Net Pack']=min_fg_possible
       plan2.loc[i,'Remarks']='Partial Alloted('+str(round((min_fg_possible/fg_q)*100,2))+'%)'
       plan2.loc[i,'Shortage']=shortage_string
+      #group_stock.loc[group_stock['Material'] == list_1[i], 'Cumulative Shortage']+=
     #print('I am in else condition','fg is',min_fg_possible)
     #merged_df = pd.merge( group_stock,prod_fg, left_on='Material', right_on='Component', how='left')
   else:
@@ -110,16 +120,22 @@ for i in range(len(plan2)):
   prod_fg['stock after allocation']=prod_fg['current stock'].copy().values
   list_1=list(prod_fg['Component'])
   list_2=list(prod_fg['current stock'])
+  list_3=list(prod_fg['req'])
+
   prod_fg.drop(columns='current stock',inplace=True)
   #print(prod_fg)
   #print(list_1,list_2)
   for i in range(len(list_1)):
     group_stock.loc[group_stock['Material'] == list_1[i], 'current stock'] = list_2[i]
+    group_stock.loc[group_stock['Material'] == list_1[i], 'net req']+=list_3[i]
+    #group_stock.loc[group_stock['Material'] == list_1[i], 'Cumulative Shortage']+=
 # Update the 'current stock' column in the original dataframe with the values from the filtered dataframe
     #group_stock['current stock'] = merged_df['current stock']
   #print(prod_fg)
   history = pd.concat([history, prod_fg])
   #history = history.append(prod_fg)
+
+group_stock['Cumulative Shortage']=-(group_stock['initial stock']-group_stock['net req'])
 
 round(8/3,2)
 
@@ -142,7 +158,10 @@ plan2.to_excel('updated_plan.xlsx',index=True)
 
 #group_stock.head()
 
-#plan2.head(10)
 
-#history.head(10)
+
+history.head(10)
+
+group_stock.head()
+
 
