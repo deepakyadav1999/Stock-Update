@@ -59,10 +59,10 @@ plan2['Net Pack']=plan2['Net Pack'].fillna(0)
 plan2[plan2['SKU']=='HT10DS1LVDFL']
 
 plan2 = plan2.assign(Remarks=np.nan)
-plan2.head()
+#plan2.head()
 
 plan2 = plan2.assign(Shortage=np.nan)
-plan2.head()
+#plan2.head()
 
 group_stock['net req']=0
 group_stock['Cumulative Shortage']=0
@@ -97,8 +97,6 @@ for i in range(len(plan2)):
       shortage_string = "-".join([f"({component})" for component, shortage in zip(shortage_df["Component"], shortage_quantity)])
       list1=list(shortage_df['Component'])
       list2=list(shortage_quantity)
-      for i in range(len(list1)):
-        group_stock.loc[group_stock['Material'] == list_1[i], 'Cumulative Shortage']+=list2[i]
 
     # Compute the minimum value of fg_possible
       min_fg_possible = prod_fg['fg_possible'].min()
@@ -136,19 +134,14 @@ for i in range(len(plan2)):
   #history = history.append(prod_fg)
 
 group_stock['Cumulative Shortage']=-(group_stock['initial stock']-group_stock['net req'])
+group_stock['Cumulative Shortage'] = np.where(group_stock['Cumulative Shortage'] < 0, np.nan, group_stock['Cumulative Shortage'])
 
-round(8/3,2)
 
 plan2.insert(1,'Material Desc',plan['Material Desc'])
 
-#plan2.iloc[130:135,:]
 
-plan2.head(10)
 
-# matched_rows = group_stock[group_stock['Material'].isin(history['Component'])]
-# matched_rows
 
-#group_stock
 
 history.to_excel('alloting_process.xlsx',index=True)
 
@@ -156,12 +149,9 @@ group_stock.to_excel('updated_stock.xlsx',index=True)
 
 plan2.to_excel('updated_plan.xlsx',index=True)
 
-#group_stock.head()
 
 
 
-history.head(10)
 
-group_stock.head()
 
 
