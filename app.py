@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, send_file, redirect, session,
 import subprocess
 import os
 
-app = Flask(__name__)
+app = Flask(__name__,static_url_path='/static', static_folder='static')
 app.config['DEBUG'] = True
 app.secret_key = '124qz53'  # Replace with a strong secret key
 
@@ -25,7 +25,7 @@ VALID_CREDENTIALS = {
 @app.route('/')
 def index():
     if 'username' in session:
-        return render_template('index.html')
+        return render_template('index.html',)
     else:
         return render_template('login.html')
 
