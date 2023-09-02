@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, send_file, redirect, session,
 import subprocess
 import os
 
-app = Flask(__name__,static_url_path='/static', static_folder='static')
+app = Flask(__name__)
 app.config['DEBUG'] = True
 app.secret_key = '124qz53'  # Replace with a strong secret key
 
@@ -25,10 +25,9 @@ VALID_CREDENTIALS = {
 @app.route('/')
 def index():
     if 'username' in session:
-        return render_template('index.html',)
+        return render_template('index.html')
     else:
         return render_template('login.html')
-
 @app.route('/login', methods=['POST'])
 def login():
     username = request.form.get('username')
@@ -44,7 +43,6 @@ def login():
 def logout():
     session.pop('username', None)
     return redirect('/')
-
 @app.route('/upload', methods=['POST'])
 def upload():
     if 'username' in session:
@@ -71,6 +69,6 @@ def download(filename):
         return redirect('/')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
-    #app.run()
+    #app.run(host='0.0.0.0', port=80)
+    app.run()
 
