@@ -63,8 +63,15 @@ def upload():
 
 @app.route('/download/<filename>')
 def download(filename):
+    
     if 'username' in session:
-        return send_file(filename, as_attachment=True)
+        file_path = os.path.join('/opt/render/project/src/', filename)
+
+        # Check if the file exists before attempting to send it
+        if os.path.exists(file_path):
+            return send_file(file_path, as_attachment=True)
+        else:
+            return "File not found", 404  # Or redirect to an error page
     else:
         return redirect('/')
 
