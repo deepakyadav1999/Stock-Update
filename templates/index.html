@@ -1,72 +1,26 @@
 <!DOCTYPE html>
 <html>
-    <style>
 
-table {
-      border-collapse: collapse;
-      margin: auto;
-    }
-    
-    th, td {
-      border: 1px solid black;
-      padding: 8px;
-      text-align: center;
-    }
-    input[type=file]::file-selector-button {
-  margin-right: 20px;
-  border: none;
-  background:  #66b3ff;
-  padding: 7px 10px;
-  border-radius: 8px;
-  color: #fff;
-  cursor: pointer;
-  transition: background .2s ease-in-out;
-}
-.submit-button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-.submit-button {
-      background-color: #29a3a3;
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 
-    .submit-button:hover {
-      background-color:  #99e6e6; /* Change this to the desired hover color */
-    }
-    .top-strip {
-            background-color: blue;
-            height: 50px; /* Set your desired height */
-            width: 100%; /* Full width */
-        }
-        
-        .logo {
-            display: inline-block;
-            padding: 10px; /* Adjust padding as needed */
-            color: rgb(224, 215, 215);
-            font-size: 30px;
-        }
-        .logo img {
-            max-height: 21.5%;
-            max-width: 21.5%;
-        }
-    </style>
+
+
 <head>
     <title>Stock Update</title>
 </head>
 <body>
+    <div class="video-background">
+        <video autoplay muted loop id="video-bg">
+            <source src="{{ url_for('static', filename='bcground.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
     <div class="top-strip">
         <div class="logo">
             <!-- Add your logo or text here -->
-            ANURAG
+
+            <img src="{{ url_for('static', filename='nurg.png') }}" alt="Logo">
+        
         </div>
     </div>
     <center><h1>Component Stock Update</h1></center>
@@ -101,23 +55,48 @@ table {
         
     </form>
     <br>
-    <table>
+    <!-- <div class="table-container" style="display: none;"> -->
+    <div style="display: flex; justify-content: center;">
+    <table id="download-table" style="display: block;">
         <tr>
             <th>Output Files</th>
             <th>Download</th>
         </tr>
         <tr>
             <td>Allotment File</td>
-            <td><a href="/download/alloting_process.xlsx">Download</a></td>
+            <td><a href="/download/alloting_process.xlsx" class="download">Download</a></td>
         </tr>
         <tr>
             <td>Updated Stock</td>
-            <td><a href="/download/updated_stock.xlsx">Download</a></td>
+            <td><a href="/download/updated_stock.xlsx" class="download">Download</a></td>
         </tr>
         <tr>
             <td>Updated Plan</td>
-            <td><a href="/download/updated_plan.xlsx">Download</a></td>
+            <td><a href="/download/updated_plan.xlsx" class="download">Download</a></td>
         </tr>
     </table>
+</div>
+
+        <div style="position: absolute; bottom : 5px;right:1px; ">
+            <marquee width="100%" direction="left" height="30px" style="font-size: 20px">
+                "Web maintenance is scheduled between 21:00 hrs and 00:00 hrs. Please refrain from using the service during this time or contact the relevant authority for assistance."
+                </marquee>
+        </div>
+    </div>
 </body>
+<!-- <script>
+    // Get a reference to the form and the table
+    var form = document.querySelector('form');
+    var downloadTable = document.getElementById('download-table');
+
+    // Add an event listener to the form submission
+    form.addEventListener('submit', function (event) {
+        // Prevent the default form submission (refresh)
+        event.preventDefault();
+
+        // Show the table after the form is submitted
+        downloadTable.style.display = 'block';
+        // tableContainer.style.display = 'flex';
+    });
+</script> -->
 </html>

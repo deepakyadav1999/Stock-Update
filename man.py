@@ -148,3 +148,10 @@ history.to_excel('alloting_process.xlsx',index=True)
 group_stock.to_excel('updated_stock.xlsx',index=True)
 
 plan2.to_excel('updated_plan.xlsx',index=True)
+
+
+
+
+
+
+
